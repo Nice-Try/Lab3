@@ -1,8 +1,3 @@
-// Define gate delays
-`define AND and #30 // 2 inputs, then 1 inverter
-`define OR or #30 // 2 inputs, then 1 inverter
-`define XOR xor #20 // 2 inputs
-
 module bitsliceAdder
 /*
   This is a bitslice of an adder. It cannot complete accurate subtraction on its
@@ -19,12 +14,12 @@ module bitsliceAdder
 );
   wire xorAout, xorCout, andAout, andBout;
 
-  `XOR xorC(xorCout, b, subtract);
-  `XOR xorA(xorAout, a, xorCout);
-  `AND andA(andAout, a, xorCout);
-  `XOR xorB(sum, xorAout, carryin);
-  `AND andB(andBout, xorAout, carryin);
-  `OR orgate(carryout, andAout, andBout);
+  xor xorC(xorCout, b, subtract);
+  xor xorA(xorAout, a, xorCout);
+  and andA(andAout, a, xorCout);
+  xor xorB(sum, xorAout, carryin);
+  and andB(andBout, xorAout, carryin);
+  or orgate(carryout, andAout, andBout);
 endmodule
 
 module twoBitAdder
@@ -43,7 +38,7 @@ module twoBitAdder
   bitsliceAdder adder1(sum[1], carryout, a[1], b[1], subtract, carryout0);
 
   // Calculate overflow
-  `XOR xorgate(overflow, carryout, carryout0);
+  xor xorgate(overflow, carryout, carryout0);
 
 endmodule
 
@@ -64,7 +59,7 @@ module FullAdder4bit
   bitsliceAdder adder2 (sum[2], carryout2, a[2], b[2], subtract, carryout1);
   bitsliceAdder adder3 (sum[3], carryout, a[3], b[3], subtract, carryout2);
 
-  `XOR xorgate(overflow, carryout, carryout2);
+  xor xorgate(overflow, carryout, carryout2);
 
   endmodule
 
@@ -99,5 +94,5 @@ module full32BitAdder
   bitsliceAdder adder31(sum[31], carryout, a[31], b[31], carryouts[30], subtract);
 
   // Calculate overflow
-  `XOR xorgate(overflow, carryout, carryouts[30]);
+  xor xorgate(overflow, carryout, carryouts[30]);
 endmodule

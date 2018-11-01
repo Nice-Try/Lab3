@@ -13,9 +13,6 @@
 `define NORMODULE  3'd6
 `define ORMODULE   3'd7
 
-`define ANDGATE and #50 // 4 inputs, 1 inverter
-`define ORGATE or #90 // 8 inputs, 1 inverter
-
 module ALUcontrolLUT
 (
 output reg[2:0] 	muxindex,
@@ -74,17 +71,17 @@ module MUX
     begin:genblock
       // mux the results
       wire [7:0] resultand;
-      `ANDGATE(resultand[0], nS2, nS0, nS1, ADDMODULE[i]);
-      `ANDGATE(resultand[1], nS2, S0, nS1, SUBMODULE[i]);
-      `ANDGATE(resultand[2], nS2, nS0, S1, XORMODULE[i]);
-      `ANDGATE(resultand[3], nS2, S0, S1, SLTMODULE[i]);
-      `ANDGATE(resultand[4], S2, nS0, nS1, ANDMODULE[i]);
-      `ANDGATE(resultand[5], S2, S0, nS1, NANDMODULE[i]);
-      `ANDGATE(resultand[6], S2, nS0, S1, NORMODULE[i]);
-      `ANDGATE(resultand[7], S2, S0, S1, ORMODULE[i]);
+      and(resultand[0], nS2, nS0, nS1, ADDMODULE[i]);
+      and(resultand[1], nS2, S0, nS1, SUBMODULE[i]);
+      and(resultand[2], nS2, nS0, S1, XORMODULE[i]);
+      and(resultand[3], nS2, S0, S1, SLTMODULE[i]);
+      and(resultand[4], S2, nS0, nS1, ANDMODULE[i]);
+      and(resultand[5], S2, S0, nS1, NANDMODULE[i]);
+      and(resultand[6], S2, nS0, S1, NORMODULE[i]);
+      and(resultand[7], S2, S0, S1, ORMODULE[i]);
 
       // or all of the results
-      `ORGATE(result[i], resultand[0], resultand[1], resultand[2], resultand[3], resultand[4], resultand[5], resultand[6], resultand[7]);
+      or(result[i], resultand[0], resultand[1], resultand[2], resultand[3], resultand[4], resultand[5], resultand[6], resultand[7]);
     end
   endgenerate
 

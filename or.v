@@ -1,7 +1,3 @@
-// Define gate delays
-`define NOR nor #20 // 2 inputs
-`define XOR xor #20 // 2 inputs
-
 module full32BitOr
 (
   output[31:0] out,
@@ -20,9 +16,9 @@ module full32BitOr
     begin:genblock
       wire _out;
       // NOR the inputs
-      `NOR(_out, a[i], b[i]);
+      nor(_out, a[i], b[i]);
       // XOR with andflag: if andflag, out will be AND, otherwise out is NAND
-      `XOR(out[i], _out, orflag);
+      xor(out[i], _out, orflag);
     end
   endgenerate
 

@@ -1,5 +1,3 @@
-`define XOR xor #20 // 2 inputs so delay 20
-
 module full32BitSLT
 (
   output [31:0]less,
