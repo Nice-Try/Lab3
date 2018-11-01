@@ -12,8 +12,10 @@ module datamemory
     parameter width         = 8
 )
 (
-    input 		                clk,
+    input 		                  clk,
+    output reg [width-1:0]      instrOut,
     output reg [width-1:0]      dataOut,
+    input [addresswidth-1:0]    instrAddr,
     input [addresswidth-1:0]    address,
     input                       writeEnable,
     input [width-1:0]           dataIn
@@ -26,6 +28,7 @@ module datamemory
         if(writeEnable)
             memory[address] <= dataIn;
         dataOut <= memory[address];
+        instrOut <= memory[instrAddr];
     end
 
 endmodule
