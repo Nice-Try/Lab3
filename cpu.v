@@ -239,7 +239,7 @@ input reset
                   .WriteData(regDataIn),
                   .ReadRegister1(rs),
                   .ReadRegister2(rt),
-                  .WriteRegister(regDstMuxOut),
+                  .WriteRegister(egDstMuxOut),
                   .RegWrite(RegWr),
                   .Clk(clk));
 
@@ -259,4 +259,26 @@ input reset
                   .operandA(da),
                   .operandB(ALUsrcMuxOut),
                   .command(ALUctrl));
+
+  // data memory to register
+  wire [7:0]  dataOut;
+  wire [31:0] dataMemMuxOut;
+
+  datamemory datamem(.clk(clk),
+                    .instrOut(instruction),
+                    .dataOut(dataOut),
+                    .instrAddr(PC),
+                    .address(address),
+                    .writeEnable(MemWr),
+                    .dataIn(db));
+
+  mux2to1by32 dataMemMux(.out(dataMemMuxOut),
+                        .address(MemtoReg),
+                        .input0(address),
+                        .input1(dataOut));
+
+  mux2to1by32 regDwMux(.out(regDataIn),
+                      .address(ctrlJAL),
+                      .input0(dataMemMuxOut),
+                      .input1(PC));
 endmodule
