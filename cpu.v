@@ -1,4 +1,5 @@
 `include "alu.v"
+`include "pc_unit.v"
 `include "regfile.v"
 `include "instruction_decoder.v"
 `include "datamemory.v"
@@ -139,4 +140,59 @@ output reg  ctrlJ,
       end
     endcase
   end
+endmodule
+
+module CPU
+(
+  input clk,
+  input reset
+  );
+
+  wire[31:0] PC;
+
+  wire[5:0] opcode,
+            rs,
+            rt,
+            rd,
+            funct;
+  wire [15:0] immediate;
+  wire [25:0] address;
+
+  instruction_decoder instrdecoder(.instruction(instruction),
+                      .opcode(opcode),
+                      .rs(rs),
+                      .rt(rt),
+                      .rd(rd),
+                      .funct(funct),
+                      .immediate(immediate),
+                      .address(address));
+
+  CPUcontrolLUT LUT(.clk(clk),
+                    .opcode(opcode),
+                    .funct(funct),
+                    .ctrlJ(ctrlJ),
+                    .ctrlJR(ctrlJR),
+                    .ctrlJAL(ctrlJAL),
+                    .ctrlBEQ(ctrlBEQ),
+                    .ctrlBNE(ctrlBNE),
+                    .RegDst(RegDst),
+                    .RegWr(RegWr),
+                    .ALUctrl(ALUctrl),
+                    .ALUsrc(ALUsrc),
+                    .MemWr(MemWr),
+                    .MemToReg(MemToReg));
+
+  pc_unit pcmodule(.PC(PC),
+                  .clk(clk),
+                  .branchAddr(immediate),
+                  .jumpAddr(address),
+                  .regDa(regDa),
+                  .ALUzero(ALUzero),
+                  .ctrlBEQ(ctrlBEQ),
+                  .ctrlBNE(ctrlBNE),
+                  .ctrlJ(ctrlJ)
+                  );
+
+
+
 endmodule
