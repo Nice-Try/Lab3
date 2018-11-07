@@ -35,95 +35,105 @@ output reg  ctrlJ,
             ALUsrc,
             MemWr,
             MemToReg
-  );
+);
+  localparam     Rd = 0,
+                 Rt = 1,
+             ALUadd = 3'b000,
+             ALUxor = 3'b010,
+             ALUsub = 3'b001,
+             ALUslt = 3'b011,
+                 Db = 0,
+                Imm = 1,
+             ALUout = 0,
+              Dout  = 1;
 
   always @(posedge clk) begin
     case(opcode)
       `LW: begin
         ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
         ctrlBEQ = 0; ctrlBNE = 0;
-        RegDst = 0;  RegWr = 0;
-        ALUctrl = 0; ALUsrc = 0;
-        MemWr = 0;   MemToReg = 0;
+        RegDst = Rt;  RegWr = 1;
+        ALUctrl = ALUadd; ALUsrc = Imm;
+        MemWr = 0;   MemToReg = Dout;
       end
       `SW: begin
         ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
         ctrlBEQ = 0; ctrlBNE = 0;
-        RegDst = 0;  RegWr = 0;
-        ALUctrl = 0; ALUsrc = 0;
-        MemWr = 0;   MemToReg = 0;
+        RegDst = Rd;  RegWr = 0;
+        ALUctrl = ALUadd; ALUsrc = Imm;
+        MemWr = 1;   MemToReg = ALUout;
       end
       `J: begin
-        ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+        ctrlJ = 1;   ctrlJR = 0;  ctrlJAL = 0;
         ctrlBEQ = 0; ctrlBNE = 0;
-        RegDst = 0;  RegWr = 0;
-        ALUctrl = 0; ALUsrc = 0;
-        MemWr = 0;   MemToReg = 0;
+        RegDst = Rd;  RegWr = 0;
+        ALUctrl = ALUxor; ALUsrc = Db;
+        MemWr = 0;   MemToReg = ALUout;
       end
       `JAL: begin
-        ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+        ctrlJ = 1;   ctrlJR = 0;  ctrlJAL = 1;
         ctrlBEQ = 0; ctrlBNE = 0;
-        RegDst = 0;  RegWr = 0;
-        ALUctrl = 0; ALUsrc = 0;
-        MemWr = 0;   MemToReg = 0;
+        RegDst = Rd;  RegWr = 1;
+        ALUctrl = ALUxor; ALUsrc = Db;
+        MemWr = 0;   MemToReg = ALUout;
       end
       `BEQ: begin
         ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-        ctrlBEQ = 0; ctrlBNE = 0;
-        RegDst = 0;  RegWr = 0;
-        ALUctrl = 0; ALUsrc = 0;
-        MemWr = 0;   MemToReg = 0;
+        ctrlBEQ = 1; ctrlBNE = 0;
+        RegDst = Rd;  RegWr = 0;
+        ALUctrl = ALUxor; ALUsrc = Db;
+        MemWr = 0;   MemToReg = ALUout;
       end
       `BNE: begin
         ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-        ctrlBEQ = 0; ctrlBNE = 0;
-        RegDst = 0;  RegWr = 0;
-        ALUctrl = 0; ALUsrc = 0;
-        MemWr = 0;   MemToReg = 0;
+        ctrlBEQ = 0; ctrlBNE = 1;
+        RegDst = Rd;  RegWr = 0;
+        ALUctrl = ALUxor; ALUsrc = Db;
+        MemWr = 0;   MemToReg = ALUout;
       end
       `XORI: begin
         ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
         ctrlBEQ = 0; ctrlBNE = 0;
-        RegDst = 0;  RegWr = 0;
-        ALUctrl = 0; ALUsrc = 0;
-        MemWr = 0;   MemToReg = 0;
+        RegDst = Rt;  RegWr = 1;
+        ALUctrl = ALUxor; ALUsrc = Imm;
+        MemWr = 0;   MemToReg = ALUout;
       end
       `ADDI: begin
         ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
         ctrlBEQ = 0; ctrlBNE = 0;
-        RegDst = 0;  RegWr = 0;
-        ALUctrl = 0; ALUsrc = 0;
-        MemWr = 0;   MemToReg = 0;
+        RegDst = Rt;  RegWr = 1;
+        ALUctrl = ALUadd; ALUsrc = Imm;
+        MemWr = 0;   MemToReg = ALUout;
       end
       `ARITH: begin
         case(funct)
           `JR: begin
-            ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+            ctrlJ = 1;   ctrlJR = 1;  ctrlJAL = 0;
             ctrlBEQ = 0; ctrlBNE = 0;
-            RegDst = 0;  RegWr = 0;
-            ALUctrl = 0; ALUsrc = 0;
-            MemWr = 0;   MemToReg = 0;
+            RegDst = Rd;  RegWr = 0;
+            ALUctrl = ALUxor; ALUsrc = Db;
+            MemWr = 0;   MemToReg = ALUout;
           end
           `ADD: begin
             ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
             ctrlBEQ = 0; ctrlBNE = 0;
-            RegDst = 0;  RegWr = 0;
-            ALUctrl = 0; ALUsrc = 0;
-            MemWr = 0;   MemToReg = 0;
+            RegDst = Rd;  RegWr = 1;
+            ALUctrl = ALUadd; ALUsrc = Db;
+            MemWr = 0;   MemToReg = ALUout;
           end
           `SUB: begin
             ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
             ctrlBEQ = 0; ctrlBNE = 0;
-            RegDst = 0;  RegWr = 0;
-            ALUctrl = 0; ALUsrc = 0;
-            MemWr = 0;   MemToReg = 0;
+            RegDst = Rd;  RegWr = 1;
+            ALUctrl = ALUsub; ALUsrc = Db;
+            MemWr = 0;   MemToReg = ALUout;
           end
           `SLT: begin
             ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
             ctrlBEQ = 0; ctrlBNE = 0;
-            RegDst = 0;  RegWr = 0;
-            ALUctrl = 0; ALUsrc = 0;
-            MemWr = 0;   MemToReg = 0;
+            RegDst = Rd;  RegWr = 1;
+            ALUctrl = ALUslt; ALUsrc = Db;
+            MemWr = 0;   MemToReg = ALUout;
           end
         endcase
       end
