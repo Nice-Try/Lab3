@@ -1,5 +1,5 @@
 `include "alu.v"
-`include "register.v"
+`include "regfile.v"
 `include "instruction_decoder.v"
 `include "datamemory.v"
 `include "mux5.v"
@@ -21,111 +21,112 @@
 `define SLT   6'h2a
 
 module CPUcontrolLUT (
-  input reg[5:0]   opcode,
-                   funct,
-  output           ctrlJ,
-                   ctrlJR,
-                   ctrlJAL,
-                   ctrlBEQ,
-                   ctrlBNE,
-                   RegDst,
-                   RegWr
-                   ALUctrl,
-                   ALUsrc,
-                   MemWr,
-                   MemToReg
+input       clk,
+input [5:0] opcode,
+            funct,
+output reg  ctrlJ,
+            ctrlJR,
+            ctrlJAL,
+            ctrlBEQ,
+            ctrlBNE,
+            RegDst,
+            RegWr,
+            ALUctrl,
+            ALUsrc,
+            MemWr,
+            MemToReg
   );
 
-  always @(opcode) begin
+  always @(posedge clk) begin
     case(opcode)
-    `LW: begin
-      ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-      ctrlBEQ = 0; ctrlBNE = 0;
-      RegDst = 0;  RegWr = 0;
-      ALUctrl = 0; ALUsrc = 0;
-      MemWr = 0;   MemToReg = 0;
-    end
-    `SW: begin
-      ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-      ctrlBEQ = 0; ctrlBNE = 0;
-      RegDst = 0;  RegWr = 0;
-      ALUctrl = 0; ALUsrc = 0;
-      MemWr = 0;   MemToReg = 0;
-    end
-    `J: begin
-      ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-      ctrlBEQ = 0; ctrlBNE = 0;
-      RegDst = 0;  RegWr = 0;
-      ALUctrl = 0; ALUsrc = 0;
-      MemWr = 0;   MemToReg = 0;
-    end
-    `JAL: begin
-      ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-      ctrlBEQ = 0; ctrlBNE = 0;
-      RegDst = 0;  RegWr = 0;
-      ALUctrl = 0; ALUsrc = 0;
-      MemWr = 0;   MemToReg = 0;
-    end
-    `BEQ: begin
-      ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-      ctrlBEQ = 0; ctrlBNE = 0;
-      RegDst = 0;  RegWr = 0;
-      ALUctrl = 0; ALUsrc = 0;
-      MemWr = 0;   MemToReg = 0;
-    end
-    `BNE: begin
-      ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-      ctrlBEQ = 0; ctrlBNE = 0;
-      RegDst = 0;  RegWr = 0;
-      ALUctrl = 0; ALUsrc = 0;
-      MemWr = 0;   MemToReg = 0;
-    end
-    `XORI: begin
-      ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-      ctrlBEQ = 0; ctrlBNE = 0;
-      RegDst = 0;  RegWr = 0;
-      ALUctrl = 0; ALUsrc = 0;
-      MemWr = 0;   MemToReg = 0;
-    end
-    `ADDI: begin
-      ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-      ctrlBEQ = 0; ctrlBNE = 0;
-      RegDst = 0;  RegWr = 0;
-      ALUctrl = 0; ALUsrc = 0;
-      MemWr = 0;   MemToReg = 0;
-    end
-    `ARITH: begin
-      always @(funct) begin
-      case(funct)
-        `JR: begin
-          ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-          ctrlBEQ = 0; ctrlBNE = 0;
-          RegDst = 0;  RegWr = 0;
-          ALUctrl = 0; ALUsrc = 0;
-          MemWr = 0;   MemToReg = 0;
-        end
-        `ADD: begin
-          ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-          ctrlBEQ = 0; ctrlBNE = 0;
-          RegDst = 0;  RegWr = 0;
-          ALUctrl = 0; ALUsrc = 0;
-          MemWr = 0;   MemToReg = 0;
-        end
-        `SUB: begin
-          ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-          ctrlBEQ = 0; ctrlBNE = 0;
-          RegDst = 0;  RegWr = 0;
-          ALUctrl = 0; ALUsrc = 0;
-          MemWr = 0;   MemToReg = 0;
-        end
-        `SLT: begin
-          ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
-          ctrlBEQ = 0; ctrlBNE = 0;
-          RegDst = 0;  RegWr = 0;
-          ALUctrl = 0; ALUsrc = 0;
-          MemWr = 0;   MemToReg = 0;
-        end
+      `LW: begin
+        ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+        ctrlBEQ = 0; ctrlBNE = 0;
+        RegDst = 0;  RegWr = 0;
+        ALUctrl = 0; ALUsrc = 0;
+        MemWr = 0;   MemToReg = 0;
+      end
+      `SW: begin
+        ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+        ctrlBEQ = 0; ctrlBNE = 0;
+        RegDst = 0;  RegWr = 0;
+        ALUctrl = 0; ALUsrc = 0;
+        MemWr = 0;   MemToReg = 0;
+      end
+      `J: begin
+        ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+        ctrlBEQ = 0; ctrlBNE = 0;
+        RegDst = 0;  RegWr = 0;
+        ALUctrl = 0; ALUsrc = 0;
+        MemWr = 0;   MemToReg = 0;
+      end
+      `JAL: begin
+        ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+        ctrlBEQ = 0; ctrlBNE = 0;
+        RegDst = 0;  RegWr = 0;
+        ALUctrl = 0; ALUsrc = 0;
+        MemWr = 0;   MemToReg = 0;
+      end
+      `BEQ: begin
+        ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+        ctrlBEQ = 0; ctrlBNE = 0;
+        RegDst = 0;  RegWr = 0;
+        ALUctrl = 0; ALUsrc = 0;
+        MemWr = 0;   MemToReg = 0;
+      end
+      `BNE: begin
+        ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+        ctrlBEQ = 0; ctrlBNE = 0;
+        RegDst = 0;  RegWr = 0;
+        ALUctrl = 0; ALUsrc = 0;
+        MemWr = 0;   MemToReg = 0;
+      end
+      `XORI: begin
+        ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+        ctrlBEQ = 0; ctrlBNE = 0;
+        RegDst = 0;  RegWr = 0;
+        ALUctrl = 0; ALUsrc = 0;
+        MemWr = 0;   MemToReg = 0;
+      end
+      `ADDI: begin
+        ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+        ctrlBEQ = 0; ctrlBNE = 0;
+        RegDst = 0;  RegWr = 0;
+        ALUctrl = 0; ALUsrc = 0;
+        MemWr = 0;   MemToReg = 0;
+      end
+      `ARITH: begin
+        case(funct)
+          `JR: begin
+            ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+            ctrlBEQ = 0; ctrlBNE = 0;
+            RegDst = 0;  RegWr = 0;
+            ALUctrl = 0; ALUsrc = 0;
+            MemWr = 0;   MemToReg = 0;
+          end
+          `ADD: begin
+            ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+            ctrlBEQ = 0; ctrlBNE = 0;
+            RegDst = 0;  RegWr = 0;
+            ALUctrl = 0; ALUsrc = 0;
+            MemWr = 0;   MemToReg = 0;
+          end
+          `SUB: begin
+            ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+            ctrlBEQ = 0; ctrlBNE = 0;
+            RegDst = 0;  RegWr = 0;
+            ALUctrl = 0; ALUsrc = 0;
+            MemWr = 0;   MemToReg = 0;
+          end
+          `SLT: begin
+            ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
+            ctrlBEQ = 0; ctrlBNE = 0;
+            RegDst = 0;  RegWr = 0;
+            ALUctrl = 0; ALUsrc = 0;
+            MemWr = 0;   MemToReg = 0;
+          end
         endcase
       end
     endcase
+  end
 endmodule
