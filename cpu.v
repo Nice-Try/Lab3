@@ -32,10 +32,10 @@ output reg  ctrlJ,
             ctrlBNE,
             RegDst,
             RegWr,
-            ALUctrl,
             ALUsrc,
             MemWr,
-            MemToReg
+            MemToReg,
+output reg [2:0] ALUctrl
 );
   localparam     Rd = 0,
                  Rt = 1,
@@ -144,19 +144,46 @@ endmodule
 
 module CPU
 (
-  input clk,
-  input reset
-  );
+input clk,
+input reset
+);
 
-  wire[31:0] PC;
-
+  // Instruction decoder outputs
   wire[5:0] opcode,
-            rs,
-            rt,
-            rd,
             funct;
+  wire[4:0] rs,
+            rt,
+            rd;
   wire [15:0] immediate;
   wire [25:0] address;
+
+  // LUT outputs
+  wire  ctrlJ,
+        ctrlJR,
+        ctrlJAL,
+        ctrlBEQ,
+        ctrlBNE,
+        RegDst,
+        RegWr,
+        ALUsrc,
+        MemWr,
+        MemToReg;
+  wire [2:0] ALUctrl;
+
+  // PC outputs
+  wire [31:0] PC;
+  wire [31:0] PC_plus_four;
+
+  // Reg file inputs and outputs
+  reg [4:0] reg31 = 5'd31;
+  wire [4:0] rdMuxOut;
+  wire [31:0] regDataIn;
+  wire [31:0] da,
+              db;
+
+  // ALU outputs
+  wire [31:0] ALUout;
+  wire        ALUzero;
 
   instruction_decoder instrdecoder(.instruction(instruction),
                       .opcode(opcode),
@@ -182,7 +209,8 @@ module CPU
                     .MemWr(MemWr),
                     .MemToReg(MemToReg));
 
-  pc_unit pcmodule(.PC(PC),
+  pcUnit pcmodule(.PC(PC),
+                  .PC_plus_four(PC_plus_four),
                   .clk(clk),
                   .branchAddr(immediate),
                   .jumpAddr(address),
@@ -190,9 +218,45 @@ module CPU
                   .ALUzero(ALUzero),
                   .ctrlBEQ(ctrlBEQ),
                   .ctrlBNE(ctrlBNE),
-                  .ctrlJ(ctrlJ)
+                  .ctrlJ(ctrlJ),
+                  .ctrlJR(ctrlJR)
                   );
 
+  // Reg file inputs
+  // Aw input
+  mux2to1by5 rdMux(.out(rdMuxOut),
+                  .address(ctrlJAL),
+                  .input0(rd),
+                  .input1(reg31));
 
+  mux2to1by5 regDstMux(.out(regDstMuxOut),
+                  .address(RegDst),
+                  .input0(rdMuxOut),
+                  .input1(rt));
 
+  regfile regFile(.ReadData1(da),
+                  .ReadData2(db),
+                  .WriteData(regDataIn),
+                  .ReadRegister1(rs),
+                  .ReadRegister2(rt),
+                  .WriteRegister(regDstMuxOut),
+                  .RegWrite(RegWr),
+                  .Clk(clk));
+
+  // ALU input
+  // Immediate sign extend
+  assign imm = {{16{immediate[15]}}, immediate};
+
+  mux2to1by32 ALUsrcMux(.out(ALUsrcMuxOut),
+                  .address(ALUsrc),
+                  .input0(db),
+                  .input1(imm));
+
+  ALU alu(.result(ALUout),
+                  .carryout(),
+                  .zero(ALUzero),
+                  .overflow(),
+                  .operandA(da),
+                  .operandB(ALUsrcMuxOut),
+                  .command(ALUctrl));
 endmodule

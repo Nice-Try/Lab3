@@ -3,10 +3,10 @@ module instruction_decoder
 (
 input  [31:0] instruction,
 output  [5:0] opcode,
-              rs,
+              funct,
+output  [4:0] rs,
               rt,
               rd,
-              funct,
 output [15:0] immediate,
 output [25:0] address
 );

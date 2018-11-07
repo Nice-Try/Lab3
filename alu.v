@@ -38,7 +38,6 @@ module MUX
 (
   output[31:0] result,
   output carryout,
-  output zero,
   output overflow,
   input[2:0] muxindex,
   input othercontrolsignal,
@@ -101,6 +100,7 @@ input[2:0]    command
   wire othercontrolsignal;
 
 	ALUcontrolLUT lut (muxindex, othercontrolsignal, command);
-  MUX mux1 (result, carryout, zero, overflow, muxindex, othercontrolsignal, operandA, operandB);
+  MUX mux1 (result, carryout, overflow, muxindex, othercontrolsignal, operandA, operandB);
+  assign zero = ~| result;
 
 endmodule
