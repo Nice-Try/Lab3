@@ -78,4 +78,6 @@ input         ctrlBEQ,     // HIGH when BEQ instr
                   .address(ctrlJ),
                   .input0(mux_jr_out),
                   .input1(mux_jr_out));
+
+  assign PC = pc_plus_four;
 endmodule
