@@ -1,20 +1,21 @@
 `include "pc_dff.v"
 `include "adder.v"
-`include "mux.v"
+`include "mux32.v"
 
 // PC unit
 module pcUnit
 (
-output [31:0] PC,          // current output of PC, goes to instruction memory
-input         clk,         // System clock
-input [15:0]  branchAddr,  // Branch address from instr decoder
-input [25:0]  jumpAddr,    // Jump address from instr decoder
-input [31:0]  regDa,       // Output of regfile Da for jump register
-input         ALUzero,     // Output of ALU zero flag when ALU is SUB (or XOR)
-input         ctrlBEQ,     // HIGH when BEQ instr
-              ctrlBNE,     // HIGH when BNE instr
-              ctrlJ,       // HIGH when J type instr
-              ctrlJR       // HIGH when JR instr
+output [31:0] PC,           // current output of PC, goes to instruction memory
+              PC_plus_four, // current output of PC, for case of JAL
+input         clk,          // System clock
+input [15:0]  branchAddr,   // Branch address from instr decoder
+input [25:0]  jumpAddr,     // Jump address from instr decoder
+input [31:0]  regDa,        // Output of regfile Da for jump register
+input         ALUzero,      // Output of ALU zero flag when ALU is SUB (or XOR)
+input         ctrlBEQ,      // HIGH when BEQ instr
+              ctrlBNE,      // HIGH when BNE instr
+              ctrlJ,        // HIGH when J type instr
+              ctrlJR        // HIGH when JR instr
 );
   wire [31:0] pc_out;
   wire [31:0] pc_plus_four;
@@ -79,5 +80,6 @@ input         ctrlBEQ,     // HIGH when BEQ instr
                   .input0(mux_jr_out),
                   .input1(mux_jr_out));
 
-  assign PC = pc_plus_four;
+  assign PC = pc_out;
+  assign PC_plus_four = pc_plus_four;
 endmodule
