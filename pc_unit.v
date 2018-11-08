@@ -1,5 +1,6 @@
 `include "pc_dff.v"
-`include "adder.v"
+//`include "adder.v"
+
 `include "mux32.v"
 
 // PC unit
@@ -29,6 +30,10 @@ input         ctrlBEQ,      // HIGH when BEQ instr
   wire [31:0] mux_jr_out;
   wire [31:0] mux_jump_out;
 
+  wire and0out;
+  wire nALUzero;
+  wire and1out;
+
   // PC
   pc_dff #(32) pc(.trigger(clk),
                   .d(mux_jump_out),
@@ -40,7 +45,7 @@ input         ctrlBEQ,      // HIGH when BEQ instr
                   .overflow(),
                   .a(pc_out),
                   .b(32'b100),
-                  .subtract(0));
+                  .subtract(1'b0));
 
   // Branch address
   assign branchAddr32 = {{14{branchAddr[15]}}, branchAddr, 2'b0};
@@ -57,7 +62,7 @@ input         ctrlBEQ,      // HIGH when BEQ instr
                   .overflow(),
                   .a(pc_plus_four),
                   .b(branchAddr32),
-                  .subtract(0));
+                  .subtract(1'b0));
 
   // Mux PC + 4 with branch address
   mux2to1by32 mux_branch(.out(mux_branch_out),

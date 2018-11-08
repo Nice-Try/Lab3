@@ -4,7 +4,7 @@
 `include "instruction_decoder.v"
 `include "datamemory.v"
 `include "mux5.v"
-`include "mux32.v"
+// `include "mux32.v"
 
 `define LW    6'h23
 `define SW    6'h2b
@@ -48,7 +48,7 @@ output reg [2:0] ALUctrl
              ALUout = 0,
               Dout  = 1;
 
-  always @(posedge clk) begin
+  always @(*) begin
     case(opcode)
       `LW: begin
         ctrlJ = 0;   ctrlJR = 0;  ctrlJAL = 0;
@@ -144,8 +144,7 @@ endmodule
 
 module CPU
 (
-input clk,
-input reset
+input clk
 );
 
   // Instruction decoder outputs
@@ -156,6 +155,9 @@ input reset
             rd;
   wire [15:0] immediate;
   wire [25:0] address;
+
+  //Instruction decoder input
+  wire [31:0] instruction;
 
   // LUT outputs
   wire  ctrlJ,
@@ -181,9 +183,15 @@ input reset
   wire [31:0] da,
               db;
 
+  // ALU src mux
+  wire [31:0] ALUsrcMuxOut;
+
   // ALU outputs
   wire [31:0] ALUout;
   wire        ALUzero;
+
+  // Reg Dest outputs
+  wire [4:0] regDstMuxOut;
 
   instruction_decoder instrdecoder(.instruction(instruction),
                       .opcode(opcode),
@@ -214,7 +222,7 @@ input reset
                   .clk(clk),
                   .branchAddr(immediate),
                   .jumpAddr(address),
-                  .regDa(regDa),
+                  .regDa(da),
                   .ALUzero(ALUzero),
                   .ctrlBEQ(ctrlBEQ),
                   .ctrlBNE(ctrlBNE),
@@ -239,12 +247,13 @@ input reset
                   .WriteData(regDataIn),
                   .ReadRegister1(rs),
                   .ReadRegister2(rt),
-                  .WriteRegister(egDstMuxOut),
+                  .WriteRegister(regDstMuxOut),
                   .RegWrite(RegWr),
                   .Clk(clk));
 
   // ALU input
   // Immediate sign extend
+  wire [31:0] imm;
   assign imm = {{16{immediate[15]}}, immediate};
 
   mux2to1by32 ALUsrcMux(.out(ALUsrcMuxOut),
@@ -261,20 +270,20 @@ input reset
                   .command(ALUctrl));
 
   // data memory to register
-  wire [7:0]  dataOut;
+  wire [31:0]  dataOut;
   wire [31:0] dataMemMuxOut;
 
   datamemory datamem(.clk(clk),
                     .instrOut(instruction),
                     .dataOut(dataOut),
                     .instrAddr(PC),
-                    .address(address),
+                    .address(ALUout),
                     .writeEnable(MemWr),
                     .dataIn(db));
 
   mux2to1by32 dataMemMux(.out(dataMemMuxOut),
-                        .address(MemtoReg),
-                        .input0(address),
+                        .address(MemToReg),
+                        .input0(ALUout),
                         .input1(dataOut));
 
   mux2to1by32 regDwMux(.out(regDataIn),

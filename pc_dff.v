@@ -6,7 +6,10 @@ module pc_dff #( parameter W = 1 )
     input      [W-1:0] d,
     output reg [W-1:0] q
 );
-    always @(posedge trigger) begin
-          q <= d;
-    end
+  initial begin
+    q <= 0;
+  end
+  always @(posedge trigger) begin
+        q <= d;
+  end
 endmodule
