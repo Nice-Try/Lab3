@@ -82,7 +82,7 @@ input         ctrlBEQ,      // HIGH when BEQ instr
   // Mux PC+4/branch with jump address
   mux2to1by32 mux_jump(.out(mux_jump_out),
                   .address(ctrlJ),
-                  .input0(mux_jr_out),
+                  .input0(mux_branch_out),
                   .input1(mux_jr_out));
 
   assign PC = pc_out;
