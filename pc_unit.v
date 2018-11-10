@@ -1,5 +1,5 @@
 `include "pc_dff.v"
-//`include "adder.v"
+// `include "adder.v"
 
 `include "mux32.v"
 

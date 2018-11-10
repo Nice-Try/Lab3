@@ -1,0 +1,33 @@
+[*]
+[*] GTKWave Analyzer v3.3.94 (w)1999-2018 BSI
+[*] Sat Nov 10 22:45:40 2018
+[*]
+[dumpfile] "/home/comparch/Lab3/cpu.vcd"
+[dumpfile_mtime] "Sat Nov 10 22:40:31 2018"
+[dumpfile_size] 96678
+[savefile] "/home/comparch/Lab3/cpu.gtkw"
+[timestart] 0
+[size] 895 600
+[pos] 902 17
+*-4.000000 16 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] cpu_test.
+[treeopen] cpu_test.cpu.
+[treeopen] cpu_test.cpu.pcmodule.
+[sst_width] 225
+[signals_width] 166
+[sst_expanded] 1
+[sst_vpaned_height] 160
+@22
+cpu_test.cpu.PC[31:0]
+@4022
+^>1 /usr/local/bin/mips-dasm-filter
+cpu_test.cpu.instruction[31:0]
+@22
+cpu_test.cpu.rs[4:0]
+@2022
+^1 /home/comparch/in-class/day14/filters/mips-regs.filter
+cpu_test.cpu.rt[4:0]
+@22
+cpu_test.cpu.rd[4:0]
+[pattern_trace] 1
+[pattern_trace] 0

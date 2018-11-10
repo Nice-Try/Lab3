@@ -13,7 +13,7 @@ module cpu_test();
 
   initial begin
 
-  $readmemh("test_func.text.hex", cpu.datamem.memory, 0);
+  $readmemh("mips1.text.hex", cpu.datamem.memory, 0);
       //   if (init_data) begin
       // $readmemh("mem.data.hex", cpu.datamem.memory, 2048);
       //   end
