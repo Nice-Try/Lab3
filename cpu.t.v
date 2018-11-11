@@ -13,10 +13,10 @@ module cpu_test();
 
   initial begin
 
-  $readmemh("mips1.text.hex", cpu.datamem.memory, 0);
-      //   if (init_data) begin
-      // $readmemh("mem.data.hex", cpu.datamem.memory, 2048);
-      //   end
+  $readmemh("mem.text.hex", cpu.datamem.memory, 0);
+
+  $readmemh("mem.data.hex", cpu.datamem.memory, 2048);
+
   $dumpfile("cpu.vcd");
   $dumpvars();
 

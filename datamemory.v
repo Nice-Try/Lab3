@@ -23,14 +23,14 @@ module datamemory
 );
 
   // translate from MIPS byte address (32bits) to
-  // verilog word array index 
+  // verilog word array index
   wire [indexwidth-1:0] index, instrindex;
   assign index = address[indexwidth+1:2];
   assign instrindex = instrAddr[indexwidth+1:2];
 
     reg [width-1:0] memory [depth-1:0];
     assign dataOut = memory[index];
-    assign instrOut = memory[instrAddr];
+    assign instrOut = memory[instrindex];
 
     always @(posedge clk) begin
         if(writeEnable)

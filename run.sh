@@ -1,7 +1,9 @@
 #! /bin/bash
 
-rm mips1.text.hex
-mars a mc CompactTextAtZero dump .text HexText mips1.text.hex mips1.asm
+rm mem.text.hex
+rm mem.data.hex
+mars a mc CompactTextAtZero dump .text HexText mem.text.hex mem.asm
+mars a mc CompactTextAtZero dump .data HexText mem.data.hex mem.asm
 
 iverilog -Wall -o cpu.vvp cpu.t.v
 ./cpu.vvp
