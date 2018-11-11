@@ -289,5 +289,5 @@ input clk
   mux2to1by32 regDwMux(.out(regDataIn),
                       .address(ctrlJAL),
                       .input0(dataMemMuxOut),
-                      .input1(PC));
+                      .input1(PC_plus_four));
 endmodule
