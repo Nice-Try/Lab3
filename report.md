@@ -2,12 +2,19 @@
 Louise Nielsen and Camille Xue
 
 ## CPU Architecture
-Louise
+![Picture](images/cpu.jpg)
+
+Our CPU has several larger components: a register file, an ALU, data memory, program counter, instruction decoder, and a lookup table. The register file, ALU, basis for the data memory, and syntax for the lookup table are from our past labs and homework.
+
+The addition to the data memory is translating from the MIPS array addresses to a Verilog array address.
+
+The lookup table is described [here](https://docs.google.com/spreadsheets/d/1HFBnwofPQbGYB8HaPXBAwar5IqTbcpSo8ErthNMP9HU/edit?usp=sharing).
+
+The instruction decoder takes in an instruction and outputs all of the different parts of the instruction we might want, basically by assigning parts of the instruction to outputs. The opcode and funct outputs go to the lookup table.
+
+The program counter is a D flip flop that adds four to itself, muxes with the branch address (in case of branching), muxes with the jump address (in case of jumping), and then sets itself (usually to its previous state plus four). Its current state is always the instruction address for data memory.
 
 ## Test plan
-Camille - stuff with Ben on Thursday
-Louise - stuff yesterday + today
-
 After making the submodules for the cpu and doing unit tests for most of them, we created a verilog testbench for our single cycle cpu that would load an assembly file into the datamemory and excute the program. After our inital test, we found that our cpu seemed to be working partially, and saw that several of our modules were actual still being clocked, like our ALU and our cpu control LUT. After eliminating that, we discovered that our PC unit wasn't incrementing properly and our CPU could only successfully complete the first instruction. We also found that our datamemory wasn't indexing properly, since we where not dividing the MIPS PC by 4, which would actually give the Verilog array index. After fixing these issues, we were able to start testing the functionality of each instruction using more complex assembly tests.
 
 We created an [assembly test](mem.asm) which tests all required functionality (except JR and JAL). Using this test, we discovered that our SLT wasn't working because our ALU was partly incorrect. We also used the provided `array_loop.asm` and `fib_func.asm` tests from the in-class repo. To test these, we looked at the values of relevant wires in gtkwave and made sure they matched what we expected.
